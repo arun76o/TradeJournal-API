@@ -2,7 +2,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using TradeJournal.Api.Services;
-
+GoogleCredential credential;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -10,14 +10,44 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var credentialPath = Path.Combine(
-    builder.Environment.ContentRootPath,
-    "Firebase",
-    "serviceAccountKey.json");
+//var credentialPath = Path.Combine(
+//    builder.Environment.ContentRootPath,
+//    "Firebase",
+//    "serviceAccountKey.json");
+
+//FirebaseApp.Create(new AppOptions
+//{
+//    Credential = GoogleCredential.FromFile(credentialPath)
+//});
+
+//var projectId = "tradejournal-5d4cf";
+
+//var firestoreDb = new FirestoreDbBuilder
+//{
+//    ProjectId = projectId,
+//    Credential = GoogleCredential.FromFile(credentialPath)
+//}.Build();
+
+
+var firebaseCredentials = Environment.GetEnvironmentVariable("FIREBASE_CREDENTIALS");
+
+if (!string.IsNullOrEmpty(firebaseCredentials))
+{
+    credential = GoogleCredential.FromJson(firebaseCredentials);
+}
+else
+{
+    var credentialPath = Path.Combine(
+        builder.Environment.ContentRootPath,
+        "Firebase",
+        "serviceAccountKey.json");
+
+    credential = GoogleCredential.FromFile(credentialPath);
+}
 
 FirebaseApp.Create(new AppOptions
 {
-    Credential = GoogleCredential.FromFile(credentialPath)
+    Credential = credential
 });
 
 var projectId = "tradejournal-5d4cf";
@@ -25,7 +55,7 @@ var projectId = "tradejournal-5d4cf";
 var firestoreDb = new FirestoreDbBuilder
 {
     ProjectId = projectId,
-    Credential = GoogleCredential.FromFile(credentialPath)
+    Credential = credential
 }.Build();
 
 builder.Services.AddSingleton(firestoreDb);
