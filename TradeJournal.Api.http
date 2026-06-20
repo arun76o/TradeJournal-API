@@ -1,0 +1,6 @@
+@TradeJournal.Api_HostAddress = http://localhost:5069
+
+GET {{TradeJournal.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
