@@ -78,11 +78,9 @@ builder.WebHost.UseUrls(
 var app = builder.Build();
 app.UseCors("AngularPolicy");
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
+      app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 
 app.UseAuthorization();
