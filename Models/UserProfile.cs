@@ -25,5 +25,8 @@
 
         [FirestoreProperty]
         public double MaxRiskPerTrade { get; set; }
+
+        [FirestoreProperty]
+        public string? ProfileImageUrl { get; set; }
     }
 }
