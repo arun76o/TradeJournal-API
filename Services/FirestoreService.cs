@@ -100,4 +100,80 @@ public class FirestoreService
 
         return snapshot.ConvertTo<Trade>();
     }
+
+    // ─── OTP Challenge Methods ──────────────────────────────────────
+
+    public async Task<OtpChallenge?> GetChallengeAsync(string challengeId)
+    {
+        DocumentSnapshot snapshot =
+            await _firestoreDb.Collection("otpChallenges")
+                              .Document(challengeId)
+                              .GetSnapshotAsync();
+
+        if (!snapshot.Exists)
+            return null;
+
+        return snapshot.ConvertTo<OtpChallenge>();
+    }
+
+    public async Task SaveChallengeAsync(OtpChallenge challenge)
+    {
+        DocumentReference docRef =
+            _firestoreDb.Collection("otpChallenges")
+                        .Document(challenge.ChallengeId);
+
+        await docRef.SetAsync(challenge);
+    }
+
+    public async Task InvalidatePreviousChallengesAsync(string userId, string purpose)
+    {
+        Query query = _firestoreDb
+            .Collection("otpChallenges")
+            .WhereEqualTo("UserId", userId)
+            .WhereEqualTo("Purpose", purpose)
+            .WhereEqualTo("Used", false);
+
+        QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+        var batch = _firestoreDb.StartBatch();
+
+        foreach (var doc in snapshot.Documents)
+        {
+            batch.Update(doc.Reference, new Dictionary<string, object>
+            {
+                { "Used", true }
+            });
+        }
+
+        await batch.CommitAsync();
+    }
+
+    public async Task UpdateChallengeAsync(OtpChallenge challenge)
+    {
+        DocumentReference docRef =
+            _firestoreDb.Collection("otpChallenges")
+                        .Document(challenge.ChallengeId);
+
+        await docRef.SetAsync(challenge);
+    }
+
+    // ─── Two-Factor Preference Methods ──────────────────────────────
+
+    public async Task<bool> GetTwoFactorEnabledAsync(string userId)
+    {
+        var profile = await GetUserProfileAsync(userId);
+        return profile?.TwoFactorEnabled ?? false;
+    }
+
+    public async Task SetTwoFactorEnabledAsync(string userId, bool enabled)
+    {
+        DocumentReference docRef =
+            _firestoreDb.Collection("userProfiles")
+                        .Document(userId);
+
+        await docRef.UpdateAsync(new Dictionary<string, object>
+        {
+            { "TwoFactorEnabled", enabled }
+        });
+    }
 }

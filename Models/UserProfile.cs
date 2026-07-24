@@ -28,5 +28,8 @@
 
         [FirestoreProperty]
         public string? ProfileImageUrl { get; set; }
+
+        [FirestoreProperty]
+        public bool TwoFactorEnabled { get; set; }
     }
 }
