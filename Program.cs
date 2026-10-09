@@ -143,6 +143,10 @@ var firestoreDb = new FirestoreDbBuilder
 builder.Services.AddSingleton(firestoreDb);
 builder.Services.AddScoped<FirestoreService>();
 
+// Prop Firms workspace (separate Firestore collections: propFirms / propFirmTrades)
+builder.Services.AddScoped<PropFirmService>();
+builder.Services.AddScoped<PropFirmTradeService>();
+
 // Two-Factor Authentication services
 builder.Services.Configure<TwoFactorOptions>(
     builder.Configuration.GetSection(TwoFactorOptions.SectionName));
