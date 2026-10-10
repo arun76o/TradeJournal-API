@@ -39,6 +39,10 @@ public class PropFirm
     [FirestoreProperty]
     public double? ProfitTarget { get; set; }
 
+    /// <summary>
+    /// Maximum daily loss expressed as a PERCENTAGE of the account size (e.g. 3 = 3%).
+    /// The currency amount is derived for display only and is never stored here.
+    /// </summary>
     [FirestoreProperty]
     public double? MaximumDailyLoss { get; set; }
 
@@ -57,7 +61,8 @@ public class PropFirm
     public double AmountSpent { get; set; }
 
     /// <summary>
-    /// Manual lifecycle flag: "Active" or "Failed". Never changed automatically from P/L.
+    /// Manual lifecycle flag: "Active", "Failed" or "Passed". Never changed automatically
+    /// from P/L.
     /// </summary>
     [FirestoreProperty]
     public string Status { get; set; } = "Active";

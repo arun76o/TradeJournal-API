@@ -70,13 +70,25 @@ public class PropFirmService
             propFirm.Payouts = 0;
         }
 
-        propFirm.Status = IsFailedStatus(propFirm.Status) ? "Failed" : "Active";
+        propFirm.Status = NormalizeStatus(propFirm.Status);
 
         return propFirm;
     }
 
-    private static bool IsFailedStatus(string? status) =>
-        string.Equals(status?.Trim(), "Failed", StringComparison.OrdinalIgnoreCase);
+    /// <summary>
+    /// Healing pass for records written before Status existed, or with an unexpected value.
+    /// Active, Failed and Passed are all preserved; anything else falls back to Active.
+    /// </summary>
+    private static string NormalizeStatus(string? status)
+    {
+        if (string.Equals(status?.Trim(), "Failed", StringComparison.OrdinalIgnoreCase))
+            return "Failed";
+
+        if (string.Equals(status?.Trim(), "Passed", StringComparison.OrdinalIgnoreCase))
+            return "Passed";
+
+        return "Active";
+    }
 
     public async Task AddPropFirmAsync(PropFirm propFirm)
     {

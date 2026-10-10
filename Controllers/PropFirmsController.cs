@@ -56,7 +56,13 @@ public class PropFirmsController : ControllerBase
             return true;
         }
 
-        error = "Status must be either Active or Failed.";
+        if (value.Equals("Passed", StringComparison.OrdinalIgnoreCase))
+        {
+            status = "Passed";
+            return true;
+        }
+
+        error = "Status must be Active, Failed or Passed.";
         return false;
     }
 
