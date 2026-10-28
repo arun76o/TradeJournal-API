@@ -38,6 +38,10 @@ public class PropFirmTrade
     [FirestoreProperty]
     public string Strategy { get; set; } = string.Empty;
 
+    // Optional: historical documents do not contain this field.
+    [FirestoreProperty]
+    public string? ExitStatus { get; set; }
+
     [FirestoreProperty]
     public DateTime TradeDate { get; set; }
 
